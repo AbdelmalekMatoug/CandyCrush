@@ -20,6 +20,6 @@ test {
 }
 jar{
     manifest{
-        attributes 'Main-class' : 'be.kuleuven.Main'
+        attributes 'Main-class' : 'be.kuleuven.CheckNeighboursInGrid'
     }
 }

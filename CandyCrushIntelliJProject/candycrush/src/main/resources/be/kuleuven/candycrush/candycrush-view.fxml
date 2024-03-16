@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane fx:id="paneel" prefHeight="374.0" prefWidth="449.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.kuleuven.candycrush.CandycrushController">
+   <children>
+      <TextField fx:id="loginBox" alignment="CENTER" layoutX="77.0" layoutY="14.0" promptText="Login" />
+      <AnchorPane fx:id="speelbord" layoutX="61.0" layoutY="80.0" prefHeight="200.0" prefWidth="200.0" />
+      <Label fx:id="scoreText" alignment="CENTER" layoutX="148.0" layoutY="334.0" maxHeight="40.0" maxWidth="70.0" minHeight="40.0" minWidth="70.0" prefHeight="40.0" prefWidth="70.0" scaleShape="false" text="Score">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnStart" layoutX="20.0" layoutY="333.0" mnemonicParsing="false" onAction="#onStart" text="Start" />
+      <Button fx:id="btnReset" layoutX="280.0" layoutY="334.0" mnemonicParsing="false" onAction="#onReset" prefHeight="18.0" prefWidth="59.0" text="Reset" />
+   </children>
+</AnchorPane>

@@ -1,7 +1,6 @@
 package be.kuleuven;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class CheckNeighboursInGrid {
 

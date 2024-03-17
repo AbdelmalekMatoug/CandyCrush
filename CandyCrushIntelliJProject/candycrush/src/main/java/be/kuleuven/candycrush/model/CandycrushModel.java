@@ -20,7 +20,9 @@ public class CandycrushModel {
         this.height = 8;
         generateRandomBoard();
     }
-
+    public CandycrushModel() {
+        this("initPlayer");
+    }
     private void generateRandomBoard() {
         speelbord.clear();
         for (int i = 0; i < width * height; i++) {
@@ -34,6 +36,10 @@ public class CandycrushModel {
         generateRandomBoard();
         score = 0;
     }
+    public void setSpeler(String spelerNaam) {
+        this.speler = spelerNaam;
+    }
+
 
     public String getSpeler() {
         return speler;
@@ -59,7 +65,20 @@ public class CandycrushModel {
         score = 0;
     }
 
+
     public void candyWithIndexSelected(int index) {
+        List<Integer> sameNeighborsList = findSameNeighbors(index);
+        int neighboursAmount = sameNeighborsList.size() - 1;
+
+        if (index != -1 && neighboursAmount >= 3) {
+            addScore(neighboursAmount + 1);
+            replaceCandies(sameNeighborsList);
+        } else {
+            System.out.println("model:candyWithIndexSelected:indexWasMinusOne");
+        }
+    }
+
+    private List<Integer> findSameNeighbors(int index) {
         CheckNeighboursInGrid grid = new CheckNeighboursInGrid();
         Iterable<Integer> sameNeighbors = grid.getSameNeighboursIds(this.speelbord, this.width, this.height, index);
         List<Integer> sameNeighborsList = new ArrayList<>();
@@ -68,21 +87,28 @@ public class CandycrushModel {
             sameNeighborsList.add(neighbor);
         }
         sameNeighborsList.add(index);
-        int neighboursAmount = sameNeighborsList.size() - 1;
 
-        if (index != -1 && (neighboursAmount) >= 3) {
-            score += neighboursAmount + 1;
-            Random random = new Random();
-            for (int element : sameNeighborsList) {
-                int randomGetal = random.nextInt(5) + 1;
-                speelbord.set(element, randomGetal);
-            }
-        } else {
-            System.out.println("model:candyWithIndexSelected:indexWasMinusOne");
+        return sameNeighborsList;
+    }
+
+    private void replaceCandies(List<Integer> sameNeighborsList) {
+        Random random = new Random();
+        for (int element : sameNeighborsList) {
+            int randomGetal = random.nextInt(5) + 1;
+            speelbord.set(element, randomGetal);
         }
     }
 
     public int getIndexFromRowColumn(int row, int column) {
         return column + row * width;
+    }
+
+
+
+    public void addScore(int points) {
+        if(points>=0){
+            this.score += points;
+        }
+
     }
 }

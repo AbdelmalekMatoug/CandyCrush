@@ -23,17 +23,16 @@ public class CandycrushController {
     private Button btnStart;
     @FXML
     private AnchorPane speelbord;
-    @FXML
-    private AnchorPane paneel;
-
     private CandycrushModel model;
     private CandycrushView view;
+
 
     private boolean gameStarted = false;
 
     @FXML
     void initialize() {
-        model = new CandycrushModel(loginBox.getText());
+
+        model = new CandycrushModel();
         view = new CandycrushView(model);
         speelbord.getChildren().add(view);
         view.setOnMouseClicked(this::onCandyClicked);
@@ -44,36 +43,50 @@ public class CandycrushController {
         view.update();
     }
 
+
     public void onCandyClicked(MouseEvent me) {
         if (gameStarted) {
             int candyIndex = view.getIndexOfClicked(me);
             model.candyWithIndexSelected(candyIndex);
             update();
         }
-
-
     }
 
     public void onReset(ActionEvent actionEvent) {
         if (gameStarted) {
             loginBox.clear();
-            model.resetScore();
-            btnStart.setDisable(false);
             loginBox.setEditable(true);
-            model.reset();
+            resetScoreAndModel();
+            btnStart.setDisable(false);
             update();
         }
     }
 
+
+
+    private void resetScoreAndModel() {
+        model.resetScore();
+        model.reset();
+    }
+
+
     public void onStart(ActionEvent actionEvent) {
-        String username = loginBox.getText();
-        if (!username.isEmpty()) {
-            loginBox.setStyle("");
-            loginBox.setEditable(false);
-            gameStarted = true;
-            btnStart.setDisable(true);
+        model.setSpeler(loginBox.getText());
+        if (!model.getSpeler().isEmpty()) {
+            startGame();
         } else {
             loginBox.setStyle("-fx-border-color: red; -fx-background-color: #ffeeee;");
         }
     }
+
+    private void startGame() {
+        loginBox.setStyle("");
+        loginBox.setEditable(false);
+        gameStarted = true;
+        btnStart.setDisable(true);
+    }
+
+
+
+
 }

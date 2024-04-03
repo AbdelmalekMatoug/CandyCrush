@@ -74,9 +74,11 @@ public class CandycrushModel {
             addScore(neighboursAmount + 1);
             replaceCandies(sameNeighborsList);
         } else {
-            System.out.println("model:candyWithIndexSelected:indexWasMinusOne");
+            //System.out.println("model:candyWithIndexSelected:indexWasMinusOne");
         }
     }
+
+
 
     private List<Integer> findSameNeighbors(int index) {
         CheckNeighboursInGrid grid = new CheckNeighboursInGrid();
@@ -87,6 +89,11 @@ public class CandycrushModel {
             sameNeighborsList.add(neighbor);
         }
         sameNeighborsList.add(index);
+        BoardSize boardSize = new BoardSize(8,8);
+        Position position = new Position(boardSize, 1, 8);
+
+        System.out.println("These are the positon: "+ position.column());
+        System.out.println("This are the neighbours: " + position.isLastColumn() );
 
         return sameNeighborsList;
     }
@@ -96,6 +103,7 @@ public class CandycrushModel {
         for (int element : sameNeighborsList) {
             int randomGetal = random.nextInt(5) + 1;
             speelbord.set(element, randomGetal);
+
         }
     }
 

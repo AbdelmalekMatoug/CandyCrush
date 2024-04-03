@@ -47,6 +47,7 @@ public class CandycrushView extends Region {
             }
         }
 
+
     }
 
     public int getIndexOfClicked(MouseEvent me){

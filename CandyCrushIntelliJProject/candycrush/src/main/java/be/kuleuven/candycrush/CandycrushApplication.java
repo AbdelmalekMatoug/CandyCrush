@@ -29,5 +29,6 @@ public class CandycrushApplication extends Application {
 
 
         launch();
+
     }
 }

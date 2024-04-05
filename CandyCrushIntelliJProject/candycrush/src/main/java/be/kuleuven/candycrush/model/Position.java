@@ -1,11 +1,8 @@
 package be.kuleuven.candycrush.model;
 
-import be.kuleuven.CheckNeighboursInGrid;
-
 import java.util.ArrayList;
-import java.util.List;
 
-record Position(BoardSize board, int row, int column) {
+public record Position(BoardSize board, int row, int column) {
 
     public Position {
 
@@ -26,19 +23,22 @@ record Position(BoardSize board, int row, int column) {
         return new Position(size, row, column);
     }
     public Iterable<Position> neighborPositions() {
-        List<Position> neighbors = new ArrayList<>();
+        ArrayList<Position> neighbors = new ArrayList<>();
 
-        // Get the grid of neighboring positions
-        Iterable<Integer> neighborIndices = CheckNeighboursInGrid.getSameNeighboursIds(List.of(), board.columns(), board.rows(), toIndex());
-        // Convert indices to positions
-        for (int index : neighborIndices) {
-            int row = index / board.columns();
-            int column = index % board.columns();
-            neighbors.add(new Position(board, row, column));
+        for (int otherRow = 0; otherRow < board.rows(); otherRow++) {
+            for (int otherColumn = 0; otherColumn < board.columns(); otherColumn++) {
+                // Calculate the distance between the current position and the target position
+                double distance = Math.sqrt(Math.pow(row - otherRow, 2) + Math.pow(column - otherColumn, 2));
+
+                if (distance > 0 && distance <= Math.sqrt(2)) {
+                    neighbors.add(new Position(board, otherRow, otherColumn));
+                }
+            }
         }
 
         return neighbors;
     }
+
     public boolean isLastColumn() {
         System.out.println("Huidige column: "+ board.columns());
         return column == board.columns();

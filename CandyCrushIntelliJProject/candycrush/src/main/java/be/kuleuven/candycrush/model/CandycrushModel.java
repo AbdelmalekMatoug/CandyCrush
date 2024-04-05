@@ -1,6 +1,6 @@
 package be.kuleuven.candycrush.model;
 
-import be.kuleuven.CheckNeighboursInGrid;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,27 +8,25 @@ import java.util.Random;
 
 public class CandycrushModel {
     private String speler;
-    private ArrayList<Integer> speelbord;
-    private int width;
-    private int height;
-    private int score;
+    private ArrayList<Candy> speelbord;
 
-    public CandycrushModel(String speler) {
+    private int score;
+    private BoardSize boardSize;
+    private Position position;
+
+    public CandycrushModel(String speler, BoardSize boardSize) {
         this.speler = speler;
         this.speelbord = new ArrayList<>();
-        this.width = 8;
-        this.height = 8;
+        this.boardSize = boardSize;
+        boardSize.positions();
         generateRandomBoard();
     }
-    public CandycrushModel() {
-        this("initPlayer");
-    }
+
+
     private void generateRandomBoard() {
         speelbord.clear();
-        for (int i = 0; i < width * height; i++) {
-            Random random = new Random();
-            int randomGetal = random.nextInt(5) + 1;
-            speelbord.add(randomGetal);
+        for (int i = 0; i < boardSize.columns() * boardSize.rows(); i++) {
+            speelbord.add(generateRandomCandy());
         }
     }
 
@@ -36,25 +34,29 @@ public class CandycrushModel {
         generateRandomBoard();
         score = 0;
     }
+
     public void setSpeler(String spelerNaam) {
         this.speler = spelerNaam;
     }
 
+    public BoardSize getBoardSize() {
+        return boardSize;
+    }
 
     public String getSpeler() {
         return speler;
     }
 
-    public List<Integer> getSpeelbord() {
+    public List<Candy> getSpeelbord() {
         return speelbord;
     }
 
     public int getWidth() {
-        return width;
+        return boardSize.columns();
     }
 
     public int getHeight() {
-        return height;
+        return boardSize.rows();
     }
 
     public int getScore() {
@@ -66,57 +68,65 @@ public class CandycrushModel {
     }
 
 
-    public void candyWithIndexSelected(int index) {
-        List<Integer> sameNeighborsList = findSameNeighbors(index);
-        int neighboursAmount = sameNeighborsList.size() - 1;
+    public void candyWithIndexSelected(Position position) {
+        int index = position.toIndex();
+        List<Position> sameNeighborsList = (List<Position>) getSameNeighbourPositions(position);
+        int neighboursAmount = sameNeighborsList.size();
 
-        if (index != -1 && neighboursAmount >= 3) {
+        if (position.toIndex() != -1 && neighboursAmount >= 3) {
             addScore(neighboursAmount + 1);
             replaceCandies(sameNeighborsList);
         } else {
             //System.out.println("model:candyWithIndexSelected:indexWasMinusOne");
         }
+        System.out.println(sameNeighborsList.size());
     }
 
 
+   private void replaceCandies(List<Position> sameNeighborsList) {
 
-    private List<Integer> findSameNeighbors(int index) {
-        CheckNeighboursInGrid grid = new CheckNeighboursInGrid();
-        Iterable<Integer> sameNeighbors = grid.getSameNeighboursIds(this.speelbord, this.width, this.height, index);
-        List<Integer> sameNeighborsList = new ArrayList<>();
+        for (Position element : sameNeighborsList) {
+            Candy randCandy = generateRandomCandy();
+            speelbord.set(element.toIndex(), randCandy);
 
-        for (int neighbor : sameNeighbors) {
-            sameNeighborsList.add(neighbor);
-        }
-        sameNeighborsList.add(index);
-        BoardSize boardSize = new BoardSize(8,8);
-        Position position = new Position(boardSize, 1, 8);
-
-        System.out.println("These are the positon: "+ position.column());
-        System.out.println("This are the neighbours: " + position.isLastColumn() );
-
-        return sameNeighborsList;
-    }
-
-    private void replaceCandies(List<Integer> sameNeighborsList) {
-        Random random = new Random();
-        for (int element : sameNeighborsList) {
-            int randomGetal = random.nextInt(5) + 1;
-            speelbord.set(element, randomGetal);
-
-        }
-    }
-
-    public int getIndexFromRowColumn(int row, int column) {
-        return column + row * width;
-    }
-
+       }
+   }
 
 
     public void addScore(int points) {
-        if(points>=0){
+        if (points >= 0) {
             this.score += points;
         }
+    }
 
+    public Candy generateRandomCandy() {
+        Random random = new Random();
+        switch (random.nextInt(5)) { // Generate a random number between 0 and 3
+            case 0:
+                return new Candy.NormalCandy(random.nextInt(4));
+            case 1:
+                return new Candy.Snickers();
+            case 2:
+                return new Candy.Mars();
+            case 3:
+                return new Candy.Bounty();
+            case 4:
+                return new Candy.Twix();
+            default:
+                throw new IllegalArgumentException("Candy isn't generated");
+        }
+    }
+
+    public Iterable<Position> getSameNeighbourPositions(Position position) {
+        List<Position> sameNeighbourPositions = new ArrayList<>();
+
+        Candy huidigeCandy = speelbord.get(position.toIndex());
+        for (Position neighbourPosition : position.neighborPositions()) {
+            if (speelbord.get(neighbourPosition.toIndex()).equals(huidigeCandy)) {
+                sameNeighbourPositions.add(neighbourPosition);
+            }
+        }
+        return sameNeighbourPositions;
     }
 }
+

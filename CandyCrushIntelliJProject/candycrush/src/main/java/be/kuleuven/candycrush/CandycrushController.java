@@ -1,6 +1,9 @@
 package be.kuleuven.candycrush;
 
+
+import be.kuleuven.candycrush.model.BoardSize;
 import be.kuleuven.candycrush.model.CandycrushModel;
+import be.kuleuven.candycrush.model.Position;
 import be.kuleuven.candycrush.view.CandycrushView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,10 +32,11 @@ public class CandycrushController {
 
     private boolean gameStarted = false;
 
+
     @FXML
     void initialize() {
 
-        model = new CandycrushModel();
+        model = new CandycrushModel("user",     new BoardSize(8,8));
         view = new CandycrushView(model);
         speelbord.getChildren().add(view);
         view.setOnMouseClicked(this::onCandyClicked);
@@ -47,19 +51,20 @@ public class CandycrushController {
     public void onCandyClicked(MouseEvent me) {
         if (gameStarted) {
             int candyIndex = view.getIndexOfClicked(me);
-            model.candyWithIndexSelected(candyIndex);
+            model.candyWithIndexSelected(Position.fromIndex(candyIndex,model.getBoardSize()));
             update();
         }
     }
 
     public void onReset(ActionEvent actionEvent) {
-        if (gameStarted) {
+
             loginBox.clear();
             loginBox.setEditable(true);
+
             resetScoreAndModel();
             btnStart.setDisable(false);
             update();
-        }
+
     }
 
 

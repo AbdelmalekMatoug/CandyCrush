@@ -1,11 +1,14 @@
 package be.kuleuven.candycrush.view;
 
+import be.kuleuven.candycrush.model.Candy;
 import be.kuleuven.candycrush.model.CandycrushModel;
+import be.kuleuven.candycrush.model.Position;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 import java.util.Iterator;
 
@@ -23,22 +26,23 @@ public class CandycrushView extends Region {
 
     }
 
-    public void update(){
+    public void update() {
         getChildren().clear();
         int i = 0;
         int height = 0;
-        Iterator<Integer> iter = model.getSpeelbord().iterator();
-        while(iter.hasNext()) {
-            int candy = iter.next();
-            Rectangle rectangle = new Rectangle(i * widthCandy, height * heigthCandy, widthCandy,heigthCandy);
+        Iterator<Candy> iterCandy = model.getSpeelbord().iterator();
+        while (iterCandy.hasNext()) {
+            Candy candy = iterCandy.next();
+            Rectangle rectangle = new Rectangle(i * widthCandy, height * heigthCandy, widthCandy, heigthCandy);
             rectangle.setFill(Color.TRANSPARENT);
             rectangle.setStroke(Color.BLACK);
-            Text text = new Text("" + candy);
-            text.setX(rectangle.getX() + (rectangle.getWidth() - text.getBoundsInLocal().getWidth()) / 2);
-            text.setY(rectangle.getY() + (rectangle.getHeight() + text.getBoundsInLocal().getHeight()) / 2);
-            getChildren().addAll(rectangle,text);
+            Node candyShape = makeCandyShape(Position.fromIndex(i, model.getBoardSize()), candy); // Use the candy obtained from iterCandy.next()
+
+            candyShape.setTranslateX(rectangle.getX() + (rectangle.getWidth() - candyShape.getBoundsInLocal().getWidth()) / 2);
+            candyShape.setTranslateY(rectangle.getY() + (rectangle.getHeight() - candyShape.getBoundsInLocal().getHeight()) / 2);
+
+            getChildren().addAll(rectangle, candyShape);
             rectangle.getStyleClass().add("grid-rectangle");
-            text.getStyleClass().add("grid-text");
             if (i == model.getWidth() - 1) {
                 i = 0;
                 height++;
@@ -46,21 +50,53 @@ public class CandycrushView extends Region {
                 i++;
             }
         }
-
-
     }
 
-    public int getIndexOfClicked(MouseEvent me){
+    public int getIndexOfClicked(MouseEvent me) {
         int index = -1;
-        int row = (int) me.getY()/heigthCandy;
-        int column = (int) me.getX()/widthCandy;
+        Position clickedOnPosition = getClickedPosition(me);
         //System.out.println(me.getX()+" - "+me.getY()+" - "+row+" - "+column);
-        if (row < model.getWidth() && column < model.getHeight()){
-            index = model.getIndexFromRowColumn(row,column);
+        if (clickedOnPosition.row() < model.getWidth() && clickedOnPosition.column() < model.getHeight()) {
+            index = clickedOnPosition.toIndex();
         }
         return index;
     }
 
+    public Position getClickedPosition(MouseEvent me) {
+        int row = (int) me.getY() / heigthCandy;
+        int column = (int) me.getX() / widthCandy;
+        Position position = new Position(model.getBoardSize(), row, column);
+        return position;
+    }
+
+    Node makeCandyShape(Position position, Candy candy) {
+        switch (candy.getClass().getSimpleName()) {
+            case "Mars":
+                return createRectangle(Color.BLACK);
+            case "Bounty":
+                return createRectangle(Color.LIGHTBLUE);
+            case "Twix":
+                return createRectangle(Color.GOLD);
+            case "Snickers":
+                return createRectangle(Color.BROWN);
+            case "NormalCandy":
+                return createCircle(((Candy.NormalCandy) candy).getColor());
+            default:
+                return null; // Handle the default case if needed
+        }
+    }
 
 
+private Circle createCircle(Color color){
+        Circle circle = new Circle(10);
+        circle.setCenterX(10);
+        circle.setCenterY(10);
+        circle.setFill(color);
+        return  circle;
+}
+private Rectangle createRectangle(Color color){
+        Rectangle rectangle = new Rectangle(15,15);
+        rectangle.setFill(color);
+        return  rectangle;
+}
 }

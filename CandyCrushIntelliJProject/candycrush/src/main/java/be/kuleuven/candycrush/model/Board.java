@@ -27,7 +27,7 @@ public class Board<T> {
     }
 
     public void fill(Function<Position, T> cellCreator) {
-        for (int index = 0; index < boardSize.rows()* boardSize.columns()-1; index++) {
+        for (int index = 0; index < boardSize.rows()* boardSize.columns(); index++) {
             Position position = Position.fromIndex(index,boardSize);
             T newCell = cellCreator.apply(position);
             cells.add(index,newCell);
@@ -39,12 +39,12 @@ public class Board<T> {
         if (toCopyBoard.boardSize.rows() != boardSize.rows() || toCopyBoard.boardSize.columns() != boardSize.columns()) {
             throw new IllegalArgumentException("Boards have different dimensions");
         } else {
-            for (int i = 0; i < boardSize.columns() * boardSize.rows()-1; i++) {
-                Position currentPosition = Position.fromIndex(i, boardSize);
-                T cellValue = cells.get(i);
-                toCopyBoard.replaceCellAt(currentPosition, cellValue);
+            for (int i = 0; i < boardSize.columns() * boardSize.rows(); i++) {
+                toCopyBoard.cells.add(cells.get(i));
             }
         }
     }
+
+
 }
 

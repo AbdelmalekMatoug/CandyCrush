@@ -10,8 +10,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-import java.util.Iterator;
-
 public class CandycrushView extends Region {
     private CandycrushModel model;
     private int widthCandy;
@@ -28,27 +26,21 @@ public class CandycrushView extends Region {
 
     public void update() {
         getChildren().clear();
-        int i = 0;
-        int height = 0;
-        Iterator<Candy> iterCandy = model.getSpeelbord().iterator();
-        while (iterCandy.hasNext()) {
-            Candy candy = iterCandy.next();
-            Rectangle rectangle = new Rectangle(i * widthCandy, height * heigthCandy, widthCandy, heigthCandy);
+        for (int j = 0; j < (model.getBoardSize().columns() * model.getBoardSize().rows()); j++) {
+            int row = j / model.getBoardSize().columns();
+            int column = j % model.getBoardSize().columns();
+            Position position = new Position(model.getBoardSize(), row, column);
+            Candy candy = model.getSpeelbord().getCellAt(position);
+            Rectangle rectangle = new Rectangle(column * widthCandy, row * heigthCandy, widthCandy, heigthCandy);
             rectangle.setFill(Color.TRANSPARENT);
             rectangle.setStroke(Color.BLACK);
-            Node candyShape = makeCandyShape(Position.fromIndex(i, model.getBoardSize()), candy); // Use the candy obtained from iterCandy.next()
+            Node candyShape = makeCandyShape(position, candy);
 
             candyShape.setTranslateX(rectangle.getX() + (rectangle.getWidth() - candyShape.getBoundsInLocal().getWidth()) / 2);
             candyShape.setTranslateY(rectangle.getY() + (rectangle.getHeight() - candyShape.getBoundsInLocal().getHeight()) / 2);
 
             getChildren().addAll(rectangle, candyShape);
             rectangle.getStyleClass().add("grid-rectangle");
-            if (i == model.getWidth() - 1) {
-                i = 0;
-                height++;
-            } else {
-                i++;
-            }
         }
     }
 

@@ -99,4 +99,67 @@ public class CandycrushModelTests {
             }
         }
     }
+
+
+    //Board tests//
+    @Test
+    void testGetCellAt() {
+        BoardSize boardSize = new BoardSize(3, 3);
+        Board<Integer> board = new Board<>(boardSize);
+        board.fill(position -> position.row() * boardSize.columns() + position.column());
+
+        assert board.getCellAt(new Position(boardSize, 0, 0)).equals(0);
+        assert board.getCellAt(new Position(boardSize, 1, 1)).equals(4);
+        assert board.getCellAt(new Position(boardSize, 2, 2)).equals(8);
+    }
+
+    @Test
+    void testReplaceCellAt() {
+        BoardSize boardSize = new BoardSize(3, 3);
+        Board<Integer> board = new Board<>(boardSize);
+        board.fill(position -> 0);
+
+        assert board.replaceCellAt(new Position(boardSize, 1, 1), 5).equals(0);
+        assert board.getCellAt(new Position(boardSize, 1, 1)).equals(5);
+    }
+
+    @Test
+    void testFillInteger() {
+        BoardSize boardSize = new BoardSize(2, 2);
+        Board<Integer> board = new Board<>(boardSize);
+        board.fill(position -> position.row() * boardSize.columns() + position.column());
+
+        assert board.getCellAt(new Position(boardSize, 0, 0)).equals(0);
+        assert board.getCellAt(new Position(boardSize, 0, 1)).equals(1);
+        assert board.getCellAt(new Position(boardSize, 1, 0)).equals(2);
+        assert board.getCellAt(new Position(boardSize, 1, 1)).equals(3);
+    }
+    @Test
+    void testFillIntegerCandy() {
+        BoardSize boardSize = new BoardSize(2, 2);
+        Board<Candy> board = new Board<>(boardSize);
+        board.fill(position -> new Candy.Twix());
+
+        assert board.getCellAt(new Position(boardSize, 0, 0)).getClass() == Candy.Twix.class;
+        assert board.getCellAt(new Position(boardSize, 0, 1)).getClass() == Candy.Twix.class;
+        assert board.getCellAt(new Position(boardSize, 1, 0)).getClass() == Candy.Twix.class;
+        assert board.getCellAt(new Position(boardSize, 1, 1)).getClass() == Candy.Twix.class;
+    }
+
+    @Test
+    void testCopyTo() {
+        BoardSize boardSize = new BoardSize(2, 2);
+        Board<Integer> board1 = new Board<>(boardSize);
+        Board<Integer> board2 = new Board<>(boardSize);
+
+        board1.fill(position -> position.row() * boardSize.columns() + position.column());
+        board1.copyTo(board2);
+        int size = boardSize.columns()*boardSize.rows();
+        for (int i = 0; i < size; i++) {
+            Position cellPosition = Position.fromIndex(i, boardSize);
+            assert board1.getCellAt(cellPosition).equals(board2.getCellAt(cellPosition));
+        }
+
+    }
+
 }

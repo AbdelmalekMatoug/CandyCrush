@@ -1,7 +1,6 @@
 package be.kuleuven.candycrush.model;
 
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,6 +19,7 @@ public class CandycrushModel {
         this.boardSize = boardSize;
         boardSize.positions();
         generateRandomBoard();
+
     }
 
 
@@ -79,7 +79,7 @@ public class CandycrushModel {
         } else {
             //System.out.println("model:candyWithIndexSelected:indexWasMinusOne");
         }
-        System.out.println(sameNeighborsList.size());
+
     }
 
 
@@ -128,5 +128,6 @@ public class CandycrushModel {
         }
         return sameNeighbourPositions;
     }
+
 }
 

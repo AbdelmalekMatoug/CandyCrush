@@ -16,8 +16,6 @@ public class CandycrushApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 370, 400);
         scene.getStylesheets().add(getClass().getResource("candycrush.css").toExternalForm());
         stage.getIcons().add(new Image(CandycrushApplication.class.getResourceAsStream("icon.png")));
-
-
         stage.setTitle("CandyCrush");
         stage.setScene(scene);
         stage.show();

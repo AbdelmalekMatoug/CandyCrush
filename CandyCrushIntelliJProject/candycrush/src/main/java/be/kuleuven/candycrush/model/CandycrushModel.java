@@ -48,6 +48,7 @@ public class CandycrushModel {
         return boardSize.columns();
     }
 
+
     public int getHeight() {
         return boardSize.rows();
     }
@@ -57,9 +58,13 @@ public class CandycrushModel {
     }
 
     public void resetScore() {
+
+
         score = 0;
     }
-
+public Board<Candy> getBoard(){
+        return speelbord;
+}
     public void candyWithIndexSelected(Position position) {
         List<Position> sameNeighborsList = (List<Position>) getSameNeighbourPositions(position);
         int neighboursAmount = sameNeighborsList.size();
@@ -110,6 +115,7 @@ public class CandycrushModel {
                 sameNeighbourPositions.add(neighbourPosition);
             }
         }
+        sameNeighbourPositions.add(position);// add clicked position
         return sameNeighbourPositions;
     }
 }

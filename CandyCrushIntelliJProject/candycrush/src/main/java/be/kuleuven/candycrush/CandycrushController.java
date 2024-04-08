@@ -2,6 +2,7 @@ package be.kuleuven.candycrush;
 
 
 import be.kuleuven.candycrush.model.BoardSize;
+import be.kuleuven.candycrush.model.Candy;
 import be.kuleuven.candycrush.model.CandycrushModel;
 import be.kuleuven.candycrush.model.Position;
 import be.kuleuven.candycrush.view.CandycrushView;
@@ -43,6 +44,7 @@ public class CandycrushController {
     }
 
     public void update() {
+
         scoreText.setText(String.valueOf(model.getScore()));
         view.update();
     }
@@ -76,6 +78,8 @@ public class CandycrushController {
 
 
     public void onStart(ActionEvent actionEvent) {
+        System.out.println (model.getSpeelbord().getPositionOfElement(new Candy.Twix()));
+        update();
         model.setSpeler(loginBox.getText());
         if (!model.getSpeler().isEmpty()) {
             startGame();

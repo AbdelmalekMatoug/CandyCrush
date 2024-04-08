@@ -26,6 +26,7 @@ public class CandycrushView extends Region {
 
     public void update() {
         getChildren().clear();
+
         for (int j = 0; j < (model.getBoardSize().columns() * model.getBoardSize().rows()); j++) {
             int row = j / model.getBoardSize().columns();
             int column = j % model.getBoardSize().columns();

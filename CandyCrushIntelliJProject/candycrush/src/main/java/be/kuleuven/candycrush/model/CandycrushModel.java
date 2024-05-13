@@ -1,9 +1,9 @@
 package be.kuleuven.candycrush.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CandycrushModel {
     private String speler;
@@ -24,7 +24,12 @@ public class CandycrushModel {
     }
 
     public void reset() {
+        Position pos = new Position(this.boardSize, 1, 2);
+        horizontalStartingPositions().forEach(System.out:: println);
+
         generateRandomBoard();
+        System.out.println(findAllMatches());
+        //System.out.println(  longestMatchDown(pos));
         score = 0;
     }
 
@@ -62,9 +67,11 @@ public class CandycrushModel {
 
         score = 0;
     }
-public Board<Candy> getBoard(){
+
+    public Board<Candy> getBoard() {
         return speelbord;
-}
+    }
+
     public void candyWithIndexSelected(Position position) {
         List<Position> sameNeighborsList = (List<Position>) getSameNeighbourPositions(position);
         int neighboursAmount = sameNeighborsList.size();
@@ -114,8 +121,49 @@ public Board<Candy> getBoard(){
             if (speelbord.getCellAt(neighbourPosition).equals(currentCandy)) {
                 sameNeighbourPositions.add(neighbourPosition);
             }
+
         }
         sameNeighbourPositions.add(position);// add clicked position
         return sameNeighbourPositions;
+    }
+
+    private boolean firstTwoHaveCandy(Candy candy, Stream<Position> positions) {
+
+        List<Position> listOfPostions = positions.toList();
+        int size = listOfPostions.size();
+        if( size >= 2){
+            return listOfPostions.stream().limit(2).map(p -> speelbord.getCellAt(p)).allMatch(c -> c.equals(candy));
+        }
+        else {
+            return false;
+        }
+
+
+    }
+
+    private Stream<Position> horizontalStartingPositions() {
+        return boardSize.positions().stream()
+                .filter(p -> !(firstTwoHaveCandy(speelbord.getCellAt(p), p.walkLeft()) && p.column() != 0));
+    }
+
+    private  Stream<Position> verticalStartingPositions() {
+        return boardSize.positions().stream()
+                .filter(p -> !(firstTwoHaveCandy(speelbord.getCellAt(p), p.walkUp()) && p.row() != 0));
+    }
+
+    private List<Position> longestMatchToRight(Position pos){
+     return  pos.walkRight().takeWhile(p -> speelbord.getCellAt(p).equals(speelbord.getCellAt(pos)) ) .toList();
+    }
+    private   List<Position> longestMatchDown(Position pos){
+        return  pos.walkDown().takeWhile(p -> speelbord.getCellAt(p).equals(speelbord.getCellAt(pos)) ) .toList();
+    }
+    public Set<List<Position>> findAllMatches(){
+        Set<List<Position>> allMatches = new HashSet<>();
+        Stream<List<Position>> horizontalMatches = horizontalStartingPositions().map(this:: longestMatchToRight).filter(p-> p.size()>=3);
+
+       Stream<List<Position>> verticalMatches = verticalStartingPositions().map(this:: longestMatchDown).filter(p-> p.size()>=3);
+        allMatches = Stream.concat(horizontalMatches,verticalMatches).collect(Collectors.toSet());
+        return  allMatches;
+
     }
 }

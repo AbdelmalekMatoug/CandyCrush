@@ -1,6 +1,7 @@
 package be.kuleuven.candycrush.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 // Definieer het record BoardSize
@@ -13,7 +14,7 @@ public record BoardSize(int rows, int columns) {
     }
 
 
-    public Iterable<Position> positions() {
+    public Collection<Position> positions() {
         List<Position> positions = new ArrayList<>();
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < columns; column++) {

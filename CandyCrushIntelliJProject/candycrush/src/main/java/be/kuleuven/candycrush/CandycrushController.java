@@ -37,7 +37,7 @@ public class CandycrushController {
     @FXML
     void initialize() {
 
-        model = new CandycrushModel("user",     new BoardSize(8,8));
+        model = new CandycrushModel("user",     new BoardSize(8 ,8));
         view = new CandycrushView(model);
         speelbord.getChildren().add(view);
         view.setOnMouseClicked(this::onCandyClicked);

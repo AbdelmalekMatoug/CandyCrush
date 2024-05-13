@@ -1,6 +1,7 @@
 package be.kuleuven.candycrush.model;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public record Position(BoardSize board, int row, int column) {
 
@@ -8,9 +9,11 @@ public record Position(BoardSize board, int row, int column) {
 
         if (row < 0 || row > board.rows() || column < 0 || column > board.columns()) {
 
-            throw new IllegalArgumentException("Aantal rijen en kolommen zijn incorrect");        }
+            throw new IllegalArgumentException("Aantal rijen en kolommen zijn incorrect");
+        }
     }
-    public int toIndex(){
+
+    public int toIndex() {
         return this.board.columns() * row + column;
     }
 
@@ -22,6 +25,7 @@ public record Position(BoardSize board, int row, int column) {
         int column = index % size.columns();
         return new Position(size, row, column);
     }
+
     public Iterable<Position> neighborPositions() {
         ArrayList<Position> neighbors = new ArrayList<>();
 
@@ -40,8 +44,33 @@ public record Position(BoardSize board, int row, int column) {
     }
 
     public boolean isLastColumn() {
-        System.out.println("Huidige column: "+ board.columns());
+        System.out.println("Huidige column: " + board.columns());
         return column == board.columns();
     }
-}
 
+    public Stream<Position> walkLeft(){
+
+        return Stream.iterate(this, pos -> new Position(board, this.row,pos.column-1 ))
+                .limit(this.column );
+    }
+
+    public Stream<Position> walkRight(){
+
+        return Stream.iterate(this, pos -> new Position(board, this.row,pos.column+1 ))
+                .limit((board.columns() - this.column));
+    }
+    public Stream<Position> walkUp(){
+
+        return Stream.iterate(this, pos -> new Position(board, pos.row-1,this.column ))
+                .limit(this.row);
+    }
+
+    public Stream<Position> walkDown(){
+
+        return Stream.iterate(this, pos -> new Position(board, pos.row+1,this.column ))
+                .limit((board.rows() - this.row));
+    }
+
+
+
+}

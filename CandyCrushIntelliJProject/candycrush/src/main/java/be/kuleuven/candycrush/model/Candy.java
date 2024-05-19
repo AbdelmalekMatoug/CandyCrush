@@ -2,7 +2,7 @@ package be.kuleuven.candycrush.model;
 
 import javafx.scene.paint.Color;
 
-public sealed interface Candy permits Candy.Bounty, Candy.Mars, Candy.NormalCandy, Candy.Snickers, Candy.Twix {
+public sealed interface Candy permits Candy.Bounty, Candy.Mars, Candy.NormalCandy, Candy.Snickers, Candy.Twix,Candy.Empty{
     record NormalCandy(int color) implements Candy {
         public NormalCandy {
             if (color < 0 || color > 3) {
@@ -16,6 +16,7 @@ public sealed interface Candy permits Candy.Bounty, Candy.Mars, Candy.NormalCand
                 case 1 -> Color.BLUE;
                 case 2 -> Color.GREEN;
                 case 3 -> Color.YELLOW;
+                case 4 -> Color.TRANSPARENT;
                 default -> throw new IllegalStateException("Unexpected value: " + color);
             };
         }
@@ -25,4 +26,5 @@ public sealed interface Candy permits Candy.Bounty, Candy.Mars, Candy.NormalCand
     record Snickers() implements Candy {}
     record Bounty() implements Candy {}
     record Twix() implements Candy {}
+    record Empty() implements Candy {}
 }

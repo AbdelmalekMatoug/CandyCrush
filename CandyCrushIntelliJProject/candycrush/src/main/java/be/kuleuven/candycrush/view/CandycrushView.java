@@ -74,6 +74,8 @@ public class CandycrushView extends Region {
                 return createRectangle(Color.BROWN);
             case "NormalCandy":
                 return createCircle(((Candy.NormalCandy) candy).getColor());
+            case "Empty":
+                return createRectangle(Color.TRANSPARENT);
             default:
                 return null; // Handle the default case if needed
         }

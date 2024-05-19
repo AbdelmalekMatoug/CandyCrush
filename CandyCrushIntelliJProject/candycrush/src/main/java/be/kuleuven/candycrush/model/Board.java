@@ -75,5 +75,12 @@ public class Board<T> {
         }
         return Collections.unmodifiableSet(positionElements);
     }
+    public void removeCellAt(Position position) {
+        T removedCell = getCellAt(position);
+        cells.set(position.toIndex(), null);
+        boardMap.remove(position);
+        updateReversedMap(removedCell);
+    }
+
 }
 

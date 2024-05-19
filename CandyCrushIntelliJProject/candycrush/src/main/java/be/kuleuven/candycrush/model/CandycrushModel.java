@@ -24,11 +24,8 @@ public class CandycrushModel {
     }
 
     public void reset() {
-        Position pos = new Position(this.boardSize, 1, 2);
-        horizontalStartingPositions().forEach(System.out:: println);
 
         generateRandomBoard();
-        System.out.println(findAllMatches());
         //System.out.println(  longestMatchDown(pos));
         score = 0;
     }
@@ -71,8 +68,20 @@ public class CandycrushModel {
     public Board<Candy> getBoard() {
         return speelbord;
     }
+//    public void   test(){
+//        Set<List<Position>> allMatches = findAllMatches();
+//        List<Position> flattenedMatches = allMatches.stream()
+//                .flatMap(List::stream)
+//                .collect(Collectors.toList());
+//        clearMatch(flattenedMatches);
+//
+//
+//
+//
+//    }
 
     public void candyWithIndexSelected(Position position) {
+
         List<Position> sameNeighborsList = (List<Position>) getSameNeighbourPositions(position);
         int neighboursAmount = sameNeighborsList.size();
 
@@ -90,6 +99,7 @@ public class CandycrushModel {
     }
 
     public void addScore(int points) {
+
         if (points >= 0) {
             this.score += points;
         }
@@ -98,14 +108,12 @@ public class CandycrushModel {
     public Candy generateRandomCandy() {
         Random random = new Random();
         switch (random.nextInt(5)) {
-            case 0:
-                return new Candy.NormalCandy(random.nextInt(4));
+            case 0, 3:
+                return  new Candy.Bounty();
             case 1:
                 return new Candy.Snickers();
             case 2:
                 return new Candy.Mars();
-            case 3:
-                return new Candy.Bounty();
             case 4:
                 return new Candy.Twix();
             default:
@@ -118,7 +126,7 @@ public class CandycrushModel {
         Candy currentCandy = speelbord.getCellAt(position);
 
         for (Position neighbourPosition : position.neighborPositions()) {
-            if (speelbord.getCellAt(neighbourPosition).equals(currentCandy)) {
+            if (speelbord.getCellAt(neighbourPosition).equals(currentCandy)&& !(currentCandy instanceof Candy.Empty)) {
                 sameNeighbourPositions.add(neighbourPosition);
             }
 
@@ -157,13 +165,58 @@ public class CandycrushModel {
     private   List<Position> longestMatchDown(Position pos){
         return  pos.walkDown().takeWhile(p -> speelbord.getCellAt(p).equals(speelbord.getCellAt(pos)) ) .toList();
     }
-    public Set<List<Position>> findAllMatches(){
+    public Set<List<Position>> findAllMatches() {
         Set<List<Position>> allMatches = new HashSet<>();
-        Stream<List<Position>> horizontalMatches = horizontalStartingPositions().map(this:: longestMatchToRight).filter(p-> p.size()>=3);
 
-       Stream<List<Position>> verticalMatches = verticalStartingPositions().map(this:: longestMatchDown).filter(p-> p.size()>=3);
-        allMatches = Stream.concat(horizontalMatches,verticalMatches).collect(Collectors.toSet());
-        return  allMatches;
+        Stream<List<Position>> horizontalMatches = horizontalStartingPositions()
+                .map(this::longestMatchToRight)
+                .filter(match -> match.size() >= 3 && match.stream().noneMatch(pos -> speelbord.getCellAt(pos) instanceof Candy.Empty));
 
+        Stream<List<Position>> verticalMatches = verticalStartingPositions()
+                .map(this::longestMatchDown)
+                .filter(match -> match.size() >= 3 && match.stream().noneMatch(pos -> speelbord.getCellAt(pos) instanceof Candy.Empty));
+
+        allMatches = Stream.concat(horizontalMatches, verticalMatches).collect(Collectors.toSet());
+
+        return allMatches;
     }
+    void clearMatch(List<Position> matchList) {
+        if (!matchList.isEmpty()) {
+            Position removedPosition = matchList.removeFirst();
+            speelbord.replaceCellAt(removedPosition, new Candy.Empty());
+            clearMatch(matchList);
+        }
+    }
+    public void fallDownTo(Position pos) {
+        if (pos.row() == 0) {
+            return;
+        }
+        Position abovePos = new Position(boardSize, pos.row() - 1, pos.column());
+        Candy currentCandy = speelbord.getCellAt(pos);
+        Candy candyAbove = speelbord.getCellAt(abovePos);
+
+        if (currentCandy instanceof Candy.Empty && !(candyAbove instanceof Candy.Empty)) {
+            speelbord.replaceCellAt(pos, candyAbove);
+            speelbord.replaceCellAt(abovePos, new Candy.Empty());
+            fallDownTo(pos);
+        } else {
+            fallDownTo(abovePos);
+        }
+    }
+
+    public boolean updateBoard() {
+        Set<List<Position>> allMatches = findAllMatches();
+        if (!allMatches.isEmpty()) {
+            int totalSize = allMatches.stream().mapToInt(List::size).sum();
+            score += totalSize;
+            allMatches.forEach(match -> {
+                clearMatch(new ArrayList<>(match));
+                match.forEach(this::fallDownTo);
+            });
+            return updateBoard();
+        }
+        return false;
+    }
+
+
 }

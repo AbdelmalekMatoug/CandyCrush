@@ -62,7 +62,7 @@ public record Position(BoardSize board, int row, int column) {
     public Stream<Position> walkUp(){
 
         return Stream.iterate(this, pos -> new Position(board, pos.row-1,this.column ))
-                .limit(this.row);
+                .limit(this.row+1);
     }
 
     public Stream<Position> walkDown(){

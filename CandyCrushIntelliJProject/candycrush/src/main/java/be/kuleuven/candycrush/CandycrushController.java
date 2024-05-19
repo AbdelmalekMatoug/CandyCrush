@@ -2,7 +2,6 @@ package be.kuleuven.candycrush;
 
 
 import be.kuleuven.candycrush.model.BoardSize;
-import be.kuleuven.candycrush.model.Candy;
 import be.kuleuven.candycrush.model.CandycrushModel;
 import be.kuleuven.candycrush.model.Position;
 import be.kuleuven.candycrush.view.CandycrushView;
@@ -51,10 +50,14 @@ public class CandycrushController {
 
 
     public void onCandyClicked(MouseEvent me) {
+        //model.fallDownTo(Position.fromIndex(candyIndex,model.getBoardSize()));
+        update();
         if (gameStarted) {
+
             int candyIndex = view.getIndexOfClicked(me);
-            model.candyWithIndexSelected(Position.fromIndex(candyIndex,model.getBoardSize()));
-            update();
+           model.fallDownTo(Position.fromIndex(candyIndex,model.getBoardSize()));
+          model.candyWithIndexSelected(Position.fromIndex(candyIndex,model.getBoardSize()));
+
         }
     }
 
@@ -78,10 +81,12 @@ public class CandycrushController {
 
 
     public void onStart(ActionEvent actionEvent) {
-        System.out.println (model.getSpeelbord().getPositionOfElement(new Candy.Twix()));
-        update();
+
+
         model.setSpeler(loginBox.getText());
         if (!model.getSpeler().isEmpty()) {
+            model.updateBoard();
+            update();
             startGame();
         } else {
             loginBox.setStyle("-fx-border-color: red; -fx-background-color: #ffeeee;");

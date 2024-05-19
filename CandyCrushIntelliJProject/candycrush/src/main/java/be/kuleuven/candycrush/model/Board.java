@@ -7,8 +7,7 @@ import java.util.function.Function;
 
 public class Board<T> {
     private BoardSize boardSize;
-    private int rows;
-    private int columns;
+
     private HashMap<Position, T> boardMap;
     private ArrayList<T> cells;
 

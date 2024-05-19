@@ -2,6 +2,7 @@ package be.kuleuven.candycrush;
 
 
 import be.kuleuven.candycrush.model.BoardSize;
+import be.kuleuven.candycrush.model.Candy;
 import be.kuleuven.candycrush.model.CandycrushModel;
 import be.kuleuven.candycrush.model.Position;
 import be.kuleuven.candycrush.view.CandycrushView;
@@ -36,7 +37,7 @@ public class CandycrushController {
     @FXML
     void initialize() {
 
-        model = new CandycrushModel("user",     new BoardSize(8 ,8));
+        model = model1;
         view = new CandycrushView(model);
         speelbord.getChildren().add(view);
         view.setOnMouseClicked(this::onCandyClicked);
@@ -50,7 +51,6 @@ public class CandycrushController {
 
 
     public void onCandyClicked(MouseEvent me) {
-        //model.fallDownTo(Position.fromIndex(candyIndex,model.getBoardSize()));
         update();
         if (gameStarted) {
 
@@ -85,7 +85,9 @@ public class CandycrushController {
 
         model.setSpeler(loginBox.getText());
         if (!model.getSpeler().isEmpty()) {
-            model.updateBoard();
+
+
+            model.maximizeScore();
             update();
             startGame();
         } else {
@@ -100,7 +102,56 @@ public class CandycrushController {
         btnStart.setDisable(true);
     }
 
+    CandycrushModel model1 = createBoardFromString("""
+   @@o#
+   o*#o
+   @@**
+   *#@@""");
 
+    CandycrushModel model2 = createBoardFromString("""
+   #oo##
+   #@o@@
+   *##o@
+   @@*@o
+   **#*o""");
+
+       CandycrushModel model3 = createBoardFromString("""
+   #@#oo@
+   @**@**
+   o##@#o
+   @#oo#@
+   @*@**@
+   *#@##*""");
+
+
+    public static CandycrushModel createBoardFromString(String configuration) {
+        var lines = configuration.toLowerCase().lines().toList();
+        BoardSize size = new BoardSize(lines.size(), lines.getFirst().length());
+        CandycrushModel model = new CandycrushModel("speler",size); // deze moet je zelf voorzien
+        for (int row = 0; row < lines.size(); row++) {
+            var line = lines.get(row);
+            for (int col = 0; col < line.length(); col++) {
+                Candy candy = characterToCandy(line.charAt(col));
+                Position pos = new Position(size,row,col);
+                model.getBoard().replaceCellAt(pos, candy);
+            }
+        }
+        return model;
+    }
+
+    private static Candy characterToCandy(char c) {
+        return switch(c) {
+            case '.' -> null;
+            case 'o' -> new Candy.NormalCandy(0);
+            case '*' -> new Candy.NormalCandy(1);
+            case '#' -> new Candy.NormalCandy(2);
+            case '@' -> new Candy.NormalCandy(3);
+            default -> throw new IllegalArgumentException("Unexpected value: " + c);
+        };
+    }
+    public static CandycrushModel createModel3() {
+        return new CandycrushModel("speler", new BoardSize(8,8));
+    }
 
 
 }

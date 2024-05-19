@@ -22,7 +22,7 @@ public record BoardSize(int rows, int columns) {
                 positions.add(pos);
             }
         }
-        //System.out.println(positions);
+
         return positions;
     }
 
